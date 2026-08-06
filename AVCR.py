@@ -147,7 +147,7 @@ if __name__ == '__main__':
     #points1 = bifurcation_alg('x**2 + t**2 - 25', 3, 4,[-5.5, 4.8], -1)     # THIS WORKS!!
     #graph_implicit(points1)
 
-    #points2 = bifurcation_alg('x*sin(x) - t', 0.43, 0.17925, 1, [-1, 1.7], -1)
+    #points2 = bifurcation_alg('x*sin(x) - t', 0.43, 0.17925, [-1, 1.7], -1)
     #graph_implicit(points2)
     
     #points3 = bifurcation_alg('x - t', -0.5, -0.5, [-1, 1], sign=1)

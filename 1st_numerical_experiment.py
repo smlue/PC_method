@@ -68,16 +68,21 @@ def choose_gradient(f, dfB, p: float, u, h: float, sgn: int):
     return best[0]
 
 #Function takes as INPUT a point and outputs the VALUE
-#Derivative takes as INPUT a point and outputs a list of length 2 as that gradient of the function
+#Derivative takes as INPUT a point and outputs a list of gradients that represents the Bouligand subdifferentil
 
-def bifurcation_alg(function, derivative, x_0: float, t_0: float, interval, sign: int, tolerance: float):        # (t_0, x_0) must be a regular point of func = 0
+def bifurcation_alg(function, derivative, x_0: float, t_0: float, interval, sign: int, tolerance: float):        
 
     if abs(function(x_0, t_0)) > tolerance :      
         raise ValueError(f'The point ({x_0}, {t_0}) is not a good approximation for a zero point of the function.')
     
-    if norm(derivative(x_0, t_0)[0]) < tolerance: #Taking the first gradient for example --> shoudl change to loop
+    dB_u0 = derivative(x_0, t_0)
+    regular = False
+    for grad in dB_u0:
+        if norm(grad) >= tolerance:
+            regular = True
+    if not regular:        
         raise ValueError(f'The point ({x_0}, {t_0}) is not a regular point of the function.')
-    
+        
     solution = []
 
     u = (x_0, t_0)
@@ -108,14 +113,13 @@ def bifurcation_alg(function, derivative, x_0: float, t_0: float, interval, sign
             dB_u = derivative(u[0], u[1])     #Returns Bouligand subdifferential as List of tuples representing the gradients
             der_u = dB_u[0]
             if len(dB_u) != 1:
-                print('It got here 1')
                 der_u = choose_gradient(function, dB_u, p, u, h, sgn)
             tan_u = induced_tangent(der_u)        
             v = predictor(u, tan_u, h, sgn)    # predictor step
 
             convergence = False
             m = 0
-            while not convergence and m <= max_corrector:         # will get next approximation point of the curve
+            while not convergence and m <= max_corrector:     
                 v_x = v[0]
                 v_t = v[1]
                 func_v = function(v_x, v_t) 
@@ -191,7 +195,6 @@ if __name__ == '__main__':
         else:
             return [(-1, -1), (1, -1)]
 
-    example1 = bifurcation_alg(example, der_example, 0, 0, [-1, 1], sign=1, tolerance=10e-5)
+    example1 = bifurcation_alg(example, der_example, 1, 1, [-1, 1], sign=-1, tolerance=10e-5)
     graph(example1)
-
     pass

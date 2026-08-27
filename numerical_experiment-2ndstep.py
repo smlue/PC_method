@@ -84,8 +84,6 @@ def bifurcation_alg(function, derivative, x_0: float, t_0: float, interval, sign
     h = steplength
     bif_encountered = False
     solution.append(u)
-
-    printt = False  #TESTING VARIABLE
     
     traversing = True
     while traversing:
@@ -94,47 +92,29 @@ def bifurcation_alg(function, derivative, x_0: float, t_0: float, interval, sign
         max_pred = max_predictor
 
         if bif_encountered and switch_branch:
-            print('HERE 1')
             printt = True
             p = pert
-            max_pred = 50     # amount of points generated on
+            max_pred = 50     # amount of points generated on pertrubation
             sgn *= -1
             bif_encountered = False
-
-        #traversing = not bool(input('If you wish to CONTINUE press ENTER otherwise write QUIT: '))
-        if traversing == False:
-            continue
             
         n = 0
         while n < max_pred:
-            if printt == True:
-                print('HERE 2')
-                print(f'u: {u}')
             dB_u = derivative(u[0], u[1])     #Returns Bouligand subdifferential as List of tuples representing the gradients
             der_u = choose_gradient(function, dB_u, p, u, h, sgn)
             tan_u = induced_tangent(der_u)        
             v = predictor(u, tan_u, h, sgn)    # predictor step
-            if printt == True:
-                print(f'predictor: {v}')
-        
+            
             convergence = False
             m = 0
-            while not convergence and m < max_corrector:
-                #if printt:
-                    #print('HERE 3')        
+            while not convergence and m < max_corrector:     
                 v_x = v[0]
                 v_t = v[1]
                 func_v = function(v_x, v_t) 
                 dB_v = derivative(v_x, v_t)
-                
                 der_v = choose_gradient(function, dB_v, p, v, h, sgn)
                 mp = moore_penrose(der_v)
                 v = (v_x - mp[0]*(func_v - p), v_t - mp[1]*(func_v - p))    # corrector steps
-                if printt:
-                   print(f'derivative at predictor: {der_v}')
-                   print(f'moore penrose at predictor: {mp}')
-                   print(f'first corrector: {v}')
-                   printt = False
                 if abs(function(v[0], v[1]) - p) <= tolerance:
                     convergence = True
                     continue
@@ -143,9 +123,6 @@ def bifurcation_alg(function, derivative, x_0: float, t_0: float, interval, sign
                     raise RuntimeError(f'The corrector method has not converged in {max_corrector} loop iterations for the tolerance of {tolerance}!')
 
             if v[1] > interval[1] or v[1] < interval[0]:
-                if printt:
-                    print('HERE 4')
-                    print(v)
                 return solution
             
             #BIFURCATION CHECK:

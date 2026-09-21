@@ -20,34 +20,6 @@ def graph(points):       #Points - Nx2 list of floats
 def norm(vector):
     return math.sqrt(sum(x**2 for x in vector))
 
-def induced_tangent(der):
-    tan = (der[1], -der[0])     
-    n = norm(tan)
-
-    if n != 0:
-        tan = (tan[0]/n, tan[1]/n)
-    else:
-        raise ValueError(str(der) + ' induces zero as its tangent!!')
-
-    det = der[0]*tan[1] - der[1]*tan[0]
-
-    if det > 0:
-        return tan
-    
-    return (-tan[0], -tan[1])
-'''
-def choose_gradient(f, dfB, p: float, u, h: float, sgn: int):       
-    best = (dfB[0], math.inf)
-    for grad in dfB:
-        tangent = induced_tangent(grad)
-        #pred = predictor(u, tangent, h, sgn)
-        val = f(pred[0], pred[1]) - p 
-        if math.fabs(val) < best[1]:       
-            best = (grad, math.fabs(val))
-    return best[0]
-'''
-
-
 def corrector(function, dB, xk: float, tk: float, p: float, epsilon: float=10e-10, max_iteration: int=1000):
     m = 0
     ym = xk
